@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\Task;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Http\Controllers\API\BaseController as BaseController;
 
-class TaskController extends Controller
+class TaskController extends BaseController
 {
     // Fetch all tasks for the authenticated user
     public function index(Request $request)
@@ -31,19 +33,20 @@ class TaskController extends Controller
     public function store(Request $request)
     {
         
-        // Validate the incoming request data
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'status' => 'required|in:Pending,In Progress,Completed',
-            'due_date' => 'required|date',
-        ]);
-        dd($validated);
+        if (empty($request->title)) {
+            return $this->sendError('Title field required.', null);
+        }
+
+        if (empty($request->due_date)) {
+            return $this->sendError('Due date field required.', null);
+        }
+       
 
         // Create a new task for the authenticated user
-        $task = Auth::user()->tasks()->create($validated);
+        $task = Auth::user()->tasks()->create($request->all());
 
-        return response()->json(['message' => 'Task created successfully.', 'task' => $task], 201);
+        return $this->sendResponse($task, 'Task created successfully.');
+       
     }
 
     public function show($id)
@@ -51,34 +54,64 @@ class TaskController extends Controller
         $task = Task::findOrFail($id);
         $this->authorize('view', $task);
 
-        return response()->json($task);
+        return $this->sendResponse($task, 'Data found successfully.');
     }
+
+    
 
     public function update(Request $request, $id)
     {
-        $task = Task::findOrFail($id);
-        $this->authorize('update', $task);
+        if (empty($request->title)) {
+            return $this->sendError('Title field required.', null);
+        }
 
-        $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'status' => 'required|in:Pending,In Progress,Completed',
-            'due_date' => 'required|date',
-        ]);
+        if (empty($request->due_date)) {
+            return $this->sendError('Due date field required.', null);
+        }
+        try {
+          
+            $task = Task::findOrFail($id);
 
-        $task->update($validated);
+          
+            $this->authorize('update', $task);
+            $data=[
+                'title' => $request->title,
+                'description' => $request->description,
+                'status' => $request->status,
+                'due_date' => $request->due_date,
+            ];
+            
+            $task->update($data);
 
-        return response()->json(['message' => 'Task updated successfully.', 'task' => $task]);
+         
+            return $this->sendResponse($task, 'Task updated successfully.');
+        } catch (ModelNotFoundException $e) {
+            
+            return $this->sendError('Task not found.', null);
+        } catch (\Exception $e) {
+            return $this->sendError('An error occurred while updating the task.', null);
+            
+        }
     }
+
 
     public function destroy($id)
     {
-        $task = Task::findOrFail($id);
-        $this->authorize('delete', $task);
-
-        $task->delete();
-
-        return response()->json(['message' => 'Task deleted successfully.']);
+       
+        try {
+          
+            $task = Task::findOrFail($id);
+            $this->authorize('delete', $task);
+    
+            $task->delete();
+            return $this->sendResponse($task, 'Task deleted successfully.');
+        } catch (ModelNotFoundException $e) {
+            
+            return $this->sendError('Task not found.', null);
+        } catch (\Exception $e) {
+            return $this->sendError('An error occurred while updating the task.', null);
+            
+        }
     }
 
 }
