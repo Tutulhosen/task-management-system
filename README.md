@@ -1,67 +1,112 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Task Management System
+This project is a Task Management API built with Laravel. It provides endpoints to manage tasks for authenticated users, including features such as CRUD operations, filtering, pagination, and robust validation.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Features
+User Authentication
 
-## About Laravel
+Implemented using Laravel Sanctum to ensure secure API access.
+Tokens are generated for each authenticated user.
+Task Management
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Supports creating, reading, updating, and deleting tasks.
+Tasks are associated with users via a one-to-many relationship.
+Ensures that users can only access and modify their own tasks.
+Dynamic Filtering and Sorting
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Tasks can be filtered by status (e.g., Pending, In Progress, Completed).
+Sorting is supported based on due_date in ascending or descending order.
+Results are paginated to return 10 tasks per page for performance optimization.
+Validation and Error Handling
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Validation rules ensure that data integrity is maintained (e.g., title, status, and due_date are required).
+Returns appropriate error responses for unauthorized actions (403) and missing resources (404).
+Authorization
 
-## Learning Laravel
+Policies are used to enforce task-specific permissions, ensuring users can only view or update tasks they own.
+API Endpoints
+Method	Endpoint	Description
+POST	/api/login	Authenticates a user and issues an API token.
+GET	/api/tasks	Retrieves tasks for the authenticated user.
+POST	/api/tasks	Creates a new task for the authenticated user.
+GET	/api/tasks/{id}	Retrieves details of a specific task.
+POST	/api/tasks/{id}	Updates a specific task.
+DELETE	/api/tasks/{id}	Deletes a specific task.
+Project Setup
+Prerequisites
+PHP (v8.0 or higher)
+Composer
+Laravel (v10)
+A database (MySQL or similar)
+Installation
+Clone the repository:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+bash
+Copy code
+git clone https://github.com/Tutulhosen/task-management-system.git  
+Navigate to the project directory:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+bash
+Copy code
+cd task-management-system  
+Install dependencies:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+bash
+Copy code
+composer install  
+Create a .env file and configure the database settings. Example:
 
-## Laravel Sponsors
+dotenv
+Copy code
+DB_CONNECTION=mysql  
+DB_HOST=127.0.0.1  
+DB_PORT=3306  
+DB_DATABASE=your_database  
+DB_USERNAME=your_username  
+DB_PASSWORD=your_password  
+Run database migrations:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+bash
+Copy code
+php artisan migrate  
+Start the development server:
 
-### Premium Partners
+bash
+Copy code
+php artisan serve  
+Use a tool like Postman or cURL to interact with the API.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Explanation
+Approach
+Authentication and Security
 
-## Contributing
+Laravel Sanctum was chosen for its simplicity and robust token-based authentication.
+Routes are protected with middleware to ensure only authenticated users can access task-related endpoints.
+Task Management
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Used Laravel's Eloquent ORM for managing task data, leveraging relationships to associate tasks with users.
+Validation rules were applied to ensure that only valid data is stored in the database.
+Authorization
 
-## Code of Conduct
+Policies were implemented to restrict access to tasks based on ownership.
+Tasks are scoped to the authenticated user, ensuring data security and isolation.
+Error Handling
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Comprehensive error handling was added to return meaningful responses for unauthorized access, missing resources, and validation errors.
+Custom responses were used for a consistent API user experience.
+Code Quality
 
-## Security Vulnerabilities
+Organized controller methods for readability and separation of concerns.
+Leveraged Laravel's built-in features for clean, maintainable code.
+Future Improvements
+Add unit and feature tests to validate API behavior.
+Implement a frontend interface to interact with the API.
+Extend task filtering capabilities (e.g., by date range).
+Include more detailed documentation for API consumers.
+Conclusion
+This project demonstrates my ability to build a secure and scalable API using Laravel. It showcases:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Expertise in using Laravel's Eloquent ORM, Policies, and Sanctum.
+Strong focus on clean code and maintainable architecture.
+Practical implementation of RESTful API principles.
+Feel free to explore the code and reach out if you have any questions or feedback.
 
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# task-management-system
