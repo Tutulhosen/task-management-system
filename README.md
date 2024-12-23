@@ -1,6 +1,6 @@
 # ----Task Management System---- #
 
-## --project instalation process-- ##
+## --project installation process-- ##
 #### git clone https://github.com/Tutulhosen/task-management-system.git ####
 #### git checkout tutul ####
 #### composer update ####
